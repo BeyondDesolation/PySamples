@@ -5,6 +5,8 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_regression
 import numpy as np
+from matplotlib import pyplot as plt
+
 
 size = 750
 X = np.random.uniform(0, 1, (size, 14))
@@ -17,7 +19,7 @@ ridge.fit(X, Y)
 rfg = RandomForestRegressor(max_depth=4, min_samples_leaf=1, min_impurity_decrease=0, ccp_alpha=0)
 rfg.fit(X, Y)
 
-linear = LinearRegression()
+# linear = LinearRegression()
 selector = SelectKBest(f_regression)
 selector.fit(X, Y)
 # estimator = Pipeline([('selector', selector), ('reg', linear)])
@@ -50,24 +52,21 @@ for key, value in mean.items():
     res = value / len(ranks)
     mean[key] = round(res, 2)
 
-print('Значения')
+print('VALUES')
 for r in ranks.items():
     print(r)
-print('Среднее')
+print('MEAN')
 print(mean)
 
 
-def sort_features(key_value_list):
-    sorted_keys = sorted(key_value_list, key=key_value_list.get, reverse=True)
-    sorted_dict = {}
-    for key in sorted_keys:
-        sorted_dict[key] = key_value_list[key]
-    return sorted_dict
+for i, (model_name, features) in enumerate(ranks.items()):
+    subplot = plt.subplot(2, 2, i+1)
+    subplot.set_title(model_name)
+    subplot.bar(list(features.keys()), list(features.values()))
 
 
-print('Отсортированные значения')
-for mr in ranks.values():
-    print(sort_features(mr))
+subplot = plt.subplot(2, 2, 4)
+subplot.set_title('Mean')
+subplot.bar(list(mean.keys()), list(mean.values()))
 
-print('Среднее')
-print(sort_features(mean))
+plt.show()
